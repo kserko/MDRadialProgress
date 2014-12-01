@@ -11,7 +11,6 @@
 #import "MDRadialProgressLabel.h"
 #import "MDRadialProgressTheme.h"
 
-
 @interface MDRadialProgressView ()
 
 // Padding from the view bounds to the outer circumference of the view.
@@ -28,6 +27,7 @@
 // animation so that after indeterminate mode is over the progress view can return
 // to its previous state.
 @property (strong, nonatomic) MDRadialProgressLabel *labelTemp;
+
 
 @end
 
@@ -115,6 +115,18 @@
 	_theme = aTheme;
 
 	[self setNeedsDisplay];
+}
+
+- (void)setProgressPercent:(CGFloat)progressPercent {
+    _progressPercent = progressPercent;
+    _progressCounter = (_progressPercent/100) * _progressTotal;
+    [self notifyProgressChangeWithPercent];
+    
+    // setNeedsDisplay needs to be in the main queue to update
+    // the drawRect if the caller of this method is in a different queue.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self setNeedsDisplay];
+    });
 }
 
 - (void)setProgressCounter:(NSUInteger)progressCounter
@@ -257,8 +269,25 @@
             
             CGColorRef color = self.theme.incompletedColor.CGColor;
             
+            //if the index of the arc is smaller than the progressCounter's index,
+            //then mark it as completed
+            
             if (i < self.progressCounter) {
-                color = self.theme.completedColor.CGColor;
+                //if multiColoredSlices have been set to True and we have an array of colors passed
+                if (self.theme.drawMultiColoredSlices && [self.theme.sliceColors count] > 0) {
+                //apply the appropriate color from our palette.
+
+                    int colorIndex = i;
+                    if (colorIndex >= [self.theme.sliceColors count]) {
+                        NSLog(@"The number of colors in the sliceColors array is %u, but should be %u", (unsigned int)[self.theme.sliceColors count], (unsigned int)self.progressTotal);
+                        colorIndex = 0;
+                    }
+                    color = ((UIColor*)self.theme.sliceColors[colorIndex]).CGColor;
+                }
+                //else apply the default completed color
+                else {
+                    color = self.theme.completedColor.CGColor;
+                }
             }
             CGContextSetFillColorWithColor(context, color);
             CGContextFillPath(context);
@@ -367,6 +396,28 @@
 
 # pragma mark - Notifications
 
+- (void)notifyProgressChangeWithPercent
+{
+    // Update the accessibilityValue and the progressSummaryView text.
+    
+    NSString *text;
+    
+    if (self.labelTextBlock) {
+        text = self.labelTextBlock(self);
+    } else {
+//        float percentageCompleted = (100.0f / self.progressTotal) * self.progressCounter;
+        text = [NSString stringWithFormat:@"%.0f%%", self.progressPercent];
+    }
+    
+    self.accessibilityValue = text;
+    self.label.text = text;
+    
+    NSString *notificationText = [NSString stringWithFormat:@"%@ %@",
+                                  NSLocalizedString(@"Progress changed to:", nil),
+                                  self.accessibilityValue];
+    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, notificationText);
+}
+
 - (void)notifyProgressChange
 {
 	// Update the accessibilityValue and the progressSummaryView text.
@@ -377,7 +428,7 @@
         text = self.labelTextBlock(self);
     } else {
         float percentageCompleted = (100.0f / self.progressTotal) * self.progressCounter;
-        text = [NSString stringWithFormat:@"%.0f", percentageCompleted];
+        text = [NSString stringWithFormat:@"%.0f%%", percentageCompleted];
     }
 	
 	self.accessibilityValue = text;

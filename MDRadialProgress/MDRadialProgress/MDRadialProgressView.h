@@ -20,7 +20,6 @@ static NSString *keyFont = @"theme.font";
 @class MDRadialProgressTheme;
 @class MDRadialProgressLabel;
 
-
 @interface MDRadialProgressView : UIView
 
 - (id)initWithFrame:(CGRect)frame andTheme:(MDRadialProgressTheme *)theme;
@@ -30,6 +29,9 @@ static NSString *keyFont = @"theme.font";
 
 // The number of steps currently completed.
 @property (assign, nonatomic) NSUInteger progressCounter;
+
+// The percentage currently completed. Will compute the ProgressCounter from the percent value
+@property (assign, nonatomic) CGFloat progressPercent;
 
 // Whether the progress is drawn clockwise (YES) or anticlockwise (NO)
 @property (assign, nonatomic) BOOL clockwise;

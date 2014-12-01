@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 
 static const NSString *STANDARD_THEME = @"standard";
 
@@ -41,9 +41,15 @@ static const NSString *STANDARD_THEME = @"standard";
 // Since 1.1.0
 @property (assign, nonatomic) BOOL drawIncompleteArcIfNoProgress;
 
+//If set to True, sliceColors array must be set with an appropriate number of slice colors
+@property (assign, nonatomic) BOOL drawMultiColoredSlices;
+
 // Regulates how far apart the slice are when sliceDividerHidden is set to YES.
 @property (assign, nonatomic) NSUInteger sliceDividerThickness;
 
+//An array of colors that will correspond to seperate slices when drawMultiColoredSlices is set to True
+//The number of colors in the array must much the progressTotal of the radial progress view created
+@property (strong, nonatomic) NSArray *sliceColors;
 
 // Label properties
 

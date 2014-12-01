@@ -10,8 +10,9 @@
 #import "MDRadialProgressView.h"
 #import "MDRadialProgressTheme.h"
 #import "MDRadialProgressLabel.h"
-
+#import "ProgressMeterStyleKit.h"
 @implementation ViewController
+
 
 - (MDRadialProgressView *)progressViewWithFrame:(CGRect)frame
 {
@@ -38,6 +39,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSArray *sliceColors = [NSArray arrayWithObjects:
+                                               [ProgressMeterStyleKit progressColor0],
+                                               [ProgressMeterStyleKit progressColor1],
+                                               [ProgressMeterStyleKit progressColor2],
+                                               [ProgressMeterStyleKit progressColor3],
+                                               [ProgressMeterStyleKit progressColor4],
+                                               [ProgressMeterStyleKit progressColor5],
+                                               [ProgressMeterStyleKit progressColor6],
+                                               [ProgressMeterStyleKit progressColor7],
+                                               [ProgressMeterStyleKit progressColor8],
+                                               [ProgressMeterStyleKit progressColor9],
+                                               [ProgressMeterStyleKit progressColor10],
+                                               [ProgressMeterStyleKit progressColor11],
+                                               [ProgressMeterStyleKit progressColor12],
+                                               [ProgressMeterStyleKit progressColor13],
+                                               [ProgressMeterStyleKit progressColor14],
+                                               [ProgressMeterStyleKit progressColor15],
+                                               nil];
+    
 	
 	UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
 	[self.view addSubview:scrollView];
@@ -46,12 +66,46 @@
     
 	int x = self.view.center.x + 80;
 	int y = 20;
-	
+    
+    //Example 0 =======================================================
+    UILabel *label = [self labelAtY:y andText:@"MultiColored slices: "];
+    [scrollView addSubview:label];
+
+    //large progress meter
+    MDRadialProgressTheme *radialViewTheme0 = [[MDRadialProgressTheme alloc] init];
+    radialViewTheme0.font = [UIFont systemFontOfSize:12];
+    radialViewTheme0.completedColor = [UIColor colorWithRed:90/255.0 green:212/255.0 blue:39/255.0 alpha:1.0];
+    radialViewTheme0.incompletedColor = [UIColor lightGrayColor];
+    radialViewTheme0.centerColor = [UIColor clearColor];
+    radialViewTheme0.centerColor = [UIColor clearColor];
+    radialViewTheme0.labelColor = [UIColor grayColor];
+    radialViewTheme0.labelShadowColor = [UIColor whiteColor];
+    radialViewTheme0.sliceDividerHidden = NO;
+    radialViewTheme0.thickness = 40;
+    radialViewTheme0.sliceDividerThickness = 2;
+    radialViewTheme0.drawMultiColoredSlices = TRUE;
+    [radialViewTheme0 setSliceColors:sliceColors];
+    
+    
+    CGRect frame = CGRectMake(x - 80, y, 120, 120 );
+    MDRadialProgressView *radialView0 = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:radialViewTheme0];
+    
+    radialView0.progressTotal = 16;
+    radialView0.progressPercent = 100; //we can set it using percentage too
+//    radialView0.progressCounter = 16;
+    radialView0.startingSlice = 1;
+    
+    [scrollView  addSubview:radialView0];
+
+    //Example 0 =======================================================
+
+    y+= 130;
+    
 	//	Example 1 ========================================================================
-	UILabel *label = [self labelAtY:y andText:@"Standard theme: "];
+	label = [self labelAtY:y andText:@"Standard theme: "];
 	[scrollView addSubview:label];
 	
-    CGRect frame = CGRectMake(x, y, 50, 50);
+    frame = CGRectMake(x, y, 50, 50);
     MDRadialProgressView *radialView = [self progressViewWithFrame:frame];
     radialView.progressTotal = 7;
     radialView.progressCounter = 4;
