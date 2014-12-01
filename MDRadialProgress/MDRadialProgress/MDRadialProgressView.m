@@ -120,7 +120,7 @@
 - (void)setProgressPercent:(CGFloat)progressPercent {
     _progressPercent = progressPercent;
     _progressCounter = (_progressPercent/100) * _progressTotal;
-    [self notifyProgressChangeWithPercent];
+    [self notifyProgressChange];
     
     // setNeedsDisplay needs to be in the main queue to update
     // the drawRect if the caller of this method is in a different queue.
@@ -396,28 +396,6 @@
 
 # pragma mark - Notifications
 
-- (void)notifyProgressChangeWithPercent
-{
-    // Update the accessibilityValue and the progressSummaryView text.
-    
-    NSString *text;
-    
-    if (self.labelTextBlock) {
-        text = self.labelTextBlock(self);
-    } else {
-//        float percentageCompleted = (100.0f / self.progressTotal) * self.progressCounter;
-        text = [NSString stringWithFormat:@"%.0f%%", self.progressPercent];
-    }
-    
-    self.accessibilityValue = text;
-    self.label.text = text;
-    
-    NSString *notificationText = [NSString stringWithFormat:@"%@ %@",
-                                  NSLocalizedString(@"Progress changed to:", nil),
-                                  self.accessibilityValue];
-    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, notificationText);
-}
-
 - (void)notifyProgressChange
 {
 	// Update the accessibilityValue and the progressSummaryView text.
@@ -428,7 +406,7 @@
         text = self.labelTextBlock(self);
     } else {
         float percentageCompleted = (100.0f / self.progressTotal) * self.progressCounter;
-        text = [NSString stringWithFormat:@"%.0f%%", percentageCompleted];
+        text = [NSString stringWithFormat:@"%.0f%%", self.progressPercent > 0 ? self.progressPercent : percentageCompleted];
     }
 	
 	self.accessibilityValue = text;

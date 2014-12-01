@@ -91,8 +91,8 @@
     MDRadialProgressView *radialView0 = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:radialViewTheme0];
     
     radialView0.progressTotal = 16;
-    radialView0.progressPercent = 100; //we can set it using percentage too
-//    radialView0.progressCounter = 16;
+//    radialView0.progressPercent = 20; //we can set it using percentage too
+    radialView0.progressCounter = 16;
     radialView0.startingSlice = 1;
     
     [scrollView  addSubview:radialView0];
